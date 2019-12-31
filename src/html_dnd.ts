@@ -2,7 +2,7 @@ namespace dnd {
   "use strict";
 
 
-  export function simulate(draggable: Element, droppable: Element): void {
+  export function simulate(draggable: Element, droppable: Element, config: { timeout: number } = { timeout: 0 }): void {
     const store = new DragDataStore();
     // For the dragstart event. New data can be added to the drag data store.
     store.mode = "readwrite";
@@ -16,19 +16,21 @@ namespace dnd {
     // read, including the data. No new data can be added.
     store.mode = "readonly";
 
-    const dragOverEvent = createEventWithDataTransfer("dragover", dataTransfer);
-    droppable.dispatchEvent(dragOverEvent);
-
-    const dropEvent = createEventWithDataTransfer("drop", dataTransfer);
-    droppable.dispatchEvent(dropEvent);
-
-    // For all other events. The formats and kinds in the drag data store list
-    // of items representing dragged data can be enumerated, but the data itself
-    // is unavailable and no new data can be added.
-    store.mode = "protected";
-
-    const dragendEvent = createEventWithDataTransfer("dragend", dataTransfer);
-    draggable.dispatchEvent(dragendEvent);
+    setTimeout(() =>{
+      const dragOverEvent = createEventWithDataTransfer("dragover", dataTransfer);
+      droppable.dispatchEvent(dragOverEvent);
+  
+      const dropEvent = createEventWithDataTransfer("drop", dataTransfer);
+      droppable.dispatchEvent(dropEvent);
+  
+      // For all other events. The formats and kinds in the drag data store list
+      // of items representing dragged data can be enumerated, but the data itself
+      // is unavailable and no new data can be added.
+      store.mode = "protected";
+  
+      const dragendEvent = createEventWithDataTransfer("dragend", dataTransfer);
+      draggable.dispatchEvent(dragendEvent);
+    }, config.timeout)
   }
 
 
